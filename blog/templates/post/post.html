@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load extras %}
+{% block title %}
+{% endblock title %}
+
+{% block style %}
+<style>
+#blog{
+  color:#fff;
+}
+
+.fa {
+  font-size: 50px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fa:hover {
+  color: darkblue;
+}
+
+.fa-thumbs-color{
+    background-color: blue;
+}
+
+</style>
+{% endblock style %}
+{% block js %}
+<script>
+function myFunction(x) {
+  x.classList.toggle("fa-thumbs-color");
+}
+
+$(document).ready(function () {
+  $("#test").submit(function (event) {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'likepost' blogposts.id %}",
+      data: {
+        'liketf': $('#liketf').val()
+      },
+      success: function () {
+          var $this = $('#likebtn');
+          if ($this.hasClass('btn btn-light')) {
+              {% if user.is_authenticated %}
+              $('#liketf').val("t")
+              $this.removeClass('btn btn-light').addClass('btn btn-primary');
+              {% endif %}
+              $("#total_like").load("{% url 'updatelike' blogposts.id %}");
+            } 
+            else if ($this.hasClass('btn btn-primary')) {
+                $('#liketf').val("f")
+                $this.removeClass('btn btn-primary').addClass('btn btn-light');
+                $("#total_like").load("{% url 'updatelike' blogposts.id %}");
+            }
+        //$('#message').html("<h2> Post Liked!</h2>")
+      }
+    });
+    return false;
+  });
+});
+
+</script>
+{% endblock js %}
+{% block body %}
+<div class="container my-3">
+    <div class="row">
+        <div class="col-lg-10">
+            <h2 class="my-3">{{blogposts.title}}</h2> 
+                {% if user.is_authenticated and blogposts.author.username == user.username %}
+                    <p><a href="{% url 'blogpost' blogposts.id %}edit">Edit</a></p>
+                {% endif %} 
+            <strong>By :</strong><span>{{blogposts.author}}</span><strong>  Published : </strong><span>{{blogposts.timestamp|naturaltime }}</span>
+            <div class="d-inline-flex btn-primary rounded-lg">
+                    
+        <!--span class="border border-primary p-1 rounded" -->
+            <form method="POST" action={% url 'likepost' blogposts.id %} id="test">
+            {% csrf_token %}
+            <input type="hidden" value="{{liketf}}" name="liketf" id="liketf">
+            <input type="submit" value="Like" id="likebtn" name="likebtn" class="{{userexe}}">
+            <div id='message'></div>
+            </form>
+            <span id="total_like" class="p-1 btn-primary rounded-lg mx-1">{{postlikes|safe}} </span>
+            </div>
+
+<!-- LikeBtn.com END -->
+            <hr/>
+            <span>{{blogposts.content | safe }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container">
+            <form action={% url 'comments' blogposts.id %}  method="post">
+                {% csrf_token %}
+                <div class="form-group w-75">
+                    <label for=""> Comment : </label>
+                    <textarea class="form-control" name="usercomment" id="usercomment" rows="3"></textarea>
+                    <input type="hidden" name="main_comment" id="main_comment" value="0">
+                    <input type="submit" value="Post" class="btn btn-primary my-2">
+                </div>
+            </form>
+        </div>
+    </div>
+    {% for comment in comments %}
+        <div class="row p-1">
+            <div class="col-lg-1 p-1 ">
+            {{comment.user}}
+            </div>
+            <div class="col-lg-10 p-1">
+                <strong>{{comment.user}}</strong> <span class="badge badge-secondary">   {{ comment.timestamp|naturaltime }}</span>
+                <p>{{comment.comment}}</P>
+                <span><a href="#collapseExample{{comment.id}}" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" class="badge badge-primary">Reply</a></span>
+                <div class="collapse" id="collapseExample{{comment.id}}">
+                    <form action={% url 'comments' blogposts.id %}  method="post">
+                    {% csrf_token %}
+                        <label for=""> Comment : </label>
+                        <textarea class="form-control" name="usercomment" id="reply_comment" rows="3"></textarea>
+                        <input type="hidden" name="main_comment" id="main_comment" value="{{comment.id}}"> 
+                        <input type="submit" value="Post" class="btn btn-primary my-2">
+                    </form>
+                </div>
+                {% for reply in replies|get_val:comment.id %}
+                <div class="row p-1">
+                    <div class="col-lg-1 p-1 ">
+                        {{reply.user}}
+                    </div>
+                    <div class="col-lg-10 p-1 ">
+                        <strong>{{reply.user}}</strong>  <span class="badge badge-secondary">   {{ reply.timestamp|naturaltime }}</span>
+                        <p>{{reply.comment}}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock body %}

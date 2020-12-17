@@ -1,0 +1,24 @@
+{% extends 'shop/base.html' %}
+{% block title %}
+{{myproducts.0.product_name}} - View Products
+{% endblock title %}
+{% block body %}
+
+<div class="container mt-3">
+    <div class="row">
+    <div class="col-lg-4">
+        <img src="/media/{{myproducts.0.image}}" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+        <div class="row mt-3 ml-3">
+            <button type="button" name="addtocart" id="addtocart" class="btn btn-primary mx-2">Add to Cart</button>
+            <button type="button" name="buynow" id="addtocart" class="btn btn-primary">Buy Now</button>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <h3> {{myproducts.0.product_name}}</h3>
+        <p><b>MRP. Rs.</b>{{myproducts.0.price}} </p>
+        <p>{{myproducts.0.desc}}</p>
+    </div>
+    </div>
+</div>
+
+{% endblock body %}

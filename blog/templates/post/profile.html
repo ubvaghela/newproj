@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}
+Blog | Profile
+{% endblock title %}
+
+{% block body %}
+<div class="container col-md-8 offset-md-2 bg-light my-4 border rounded border-secondary p-3">
+    <h1 class="text-justify text-center">Your Profile</h1>
+    <p><a href="{% url 'update_profile' %}">Edit Profile</a></p>
+    <hr/>
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="row mx-1">
+                <label for="" class="font-weight-bold">Name : </label> <span> {{user.first_name}} {{user.last_name}}</span>
+            </div>    
+            <div class="row mx-1">
+                <label for="" class="font-weight-bold">Email : </label> <span> {{user.email}}</span>
+            </div>    
+            <div class="row mx-1">
+                <label for="" class="font-weight-bold">Biodata : </label><span>{{profile_data.bio}}</span>
+            </div>    
+            <div class="row mx-1">
+                <label for="" class="font-weight-bold">Location : </label><span>{{profile_data.location}}</span>
+            </div>    
+            <div class="row mx-1">
+                <label for="" class="font-weight-bold">Birth Date : </label><span> {{profile_data.birth_date}}</span>
+            </div> 
+        </div>
+        <div class="col-sm-3">
+            <img src="/media/{{profile_data.photo}}" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="{{user.first_name}} {{user.last_name}}">
+        </div>
+    </div>
+</div>
+{% endblock body %}

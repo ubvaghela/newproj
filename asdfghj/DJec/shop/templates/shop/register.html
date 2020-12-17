@@ -1,0 +1,28 @@
+{% extends "shop/base.html" %}
+{% block body %}
+<style type="text/css">
+	form,label{
+		font-weight: 700;
+		margin-top: 20px;
+	}
+</style>
+<section class="sec-product-detail bg0 p-t-65 p-b-60 my-4">
+<div class="container offset-md-3 my-4 m-auto p-3 w-75" style="background-color: beige">
+<h1 class='justify-content-center text-center'>Create Account</h1>
+<form method="POST" action="{% url 'register' %}">
+	{% csrf_token %}
+	{% if form.errors %}
+		<p>Form Have Error:</p>
+		{% for field in form %}
+			{% if field.errors %}
+				{{field.errors}}
+			{% endif %}
+			
+		{% endfor %}
+	{% endif %}
+	{{form.as_p}}
+	<input type="submit" value="Register" class="btn btn-secondary mt-2">
+</form>
+</div>
+</section>
+{% endblock body %}

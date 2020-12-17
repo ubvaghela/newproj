@@ -1,0 +1,23 @@
+{% extends 'shop/base.html' %}
+{% block title %}
+{{myproducts.0.product_name}} - View Products
+{% endblock title %}
+{% block body %}
+<section class="sec-product-detail bg0 p-t-65 p-b-60">
+<div class="container mt-3">
+    <div class="row">
+    <div class="col-lg-4">
+        <img src="/media/{{myproducts.0.image}}" class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+        
+    </div>
+    <div class="col-lg-6 my-5">
+        <h3> {{myproducts.0.product_name}}</h3>
+        <p><b>MRP. Rs.</b>{{myproducts.0.price}} </p>
+        <p>{{myproducts.0.desc}}</p>
+    </div>
+    </div>
+</div>
+</section>
+
+{% endblock body %}
+

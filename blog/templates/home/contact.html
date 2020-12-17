@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}
+Blog | Contact 
+{% endblock title %}
+
+{% block style %}
+<style>
+#contact{
+  color:#fff;
+}
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container col-md-6 offset-md-3 bg-light my-4 border rounded border-secondary p-3">
+<form method="POST" action="">
+<h1 class="text-justify text-center">Contact Us</h1>
+    {% csrf_token %}
+    {{form.as_p}}
+    <div class="text-center">
+        <input type="submit" value="Submit" class="btn btn-primary w-25">
+    </div>
+</form>
+</div>
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}

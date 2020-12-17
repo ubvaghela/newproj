@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}
+Blog | Home 
+{% endblock title %}
+
+{% block style %}
+<style>
+#index{
+  color:#fff;
+}
+.post h5 a{
+  color:black;
+}
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container my-3">
+  <div class="row">
+    <div class="col-lg-8">
+    {% if user.is_authenticated %}
+      <div class="navbar navbar-expand-lg navbar-light bg-light card my-3">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item"><a href="/" class="nav-link">All Post</a></li>
+          <li class="nav-item"><a href="{% url 'index' %}?user={{user.id}}" class="nav-link">Your Post</a></li>
+          <li class="nav-item"><a href="{% url 'index' %}post/new/add/" class="nav-link">Add New Post</a></li>
+        </ul>
+      </div>
+    {% else %}
+    {% endif %}
+    
+      {% for post in posts %}
+      <div class="card my-3">
+        <div class="card-body post">
+        {% if user.is_authenticated and post.author.username == user.username %}
+          <span class="float-right"><a href="{% url 'index' %}post/{{post.id}}/edit">Edit</a> | <a href="{% url 'post_delete' post.id %}">Delete</a></span>
+        {% endif %}
+          <h5 class="card-title"><a href="{% url 'index' %}post/{{post.id}}">{{post.title}}</a></h5>
+          <p class="card-text">{{post.content|safe|striptags|truncatechars:140}}</p>
+          <a href="{% url 'index' %}post/{{post.id}}" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+      {% endfor %}
+      
+    </div>
+    <div class="col-lg-4" style="border:1px solid green">
+    </div>  
+  </div>
+ <div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            {% if request.GET.srctxt %}
+              <a href="?page={{ posts.previous_page_number }}&&srctxt={{ request.GET.srctxt }}">previous</a>
+            {% else %}
+              <a href="?page={{ posts.previous_page_number }}">previous</a>
+            {% endif %}
+        {% endif %}
+
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+            {% if request.GET.srctxt %}
+              <a href="?page={{ posts.next_page_number }}&&srctxt={{ request.GET.srctxt }}">next</a>
+            {% else %}
+              <a href="?page={{ posts.next_page_number }}">next</a>
+            {% endif %}
+            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}
