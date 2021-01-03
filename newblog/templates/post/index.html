@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}
+    Home Page
+{% endblock title %}
+
+{% block style %}
+    
+{% endblock style %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-10">
+            <h2 class="my-3">{{blogpost.title}}</h2> 
+            <strong>By :</strong><span>{{blogpost.author}}</span><strong>  Published : </strong><span>{{blogpost.created|naturaltime }}</span>
+<!-- LikeBtn.com END -->
+            <hr/>
+            <span>{{blogpost.content | safe }}</span>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+    
+{% endblock js %}
+    
+        
