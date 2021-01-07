@@ -5,10 +5,11 @@ from django.core import serializers
 import json
 
 # Create your views here.
+
 def index(request, user=None):
-    posts = Post.objects.all()
-    params = {'posts':posts}
-    return render(request,'home/index.html',params)
+    #posts = Post.objects.all()
+    #params = {'posts':posts}
+    return render(request,'home/index.html',{})
 
 def about(request):
     return render(request,'home/about.html',{})
@@ -21,7 +22,6 @@ def search(request):
         query = request.GET.get("query")
         query = Post.objects.all().filter(title__icontains=query)
         context = serializers.serialize('json',query)
-        print(context)
         output = [item for item in json.loads(context)]
         return JsonResponse({"data":output})
     else:
