@@ -57,7 +57,8 @@
 <script>
   $(function(){
 
-    $('#cart').attr('data-content',JSON.parse(localStorage.getItem('cart_total_item')));
+    //$('#cart').attr('data-content',JSON.parse(localStorage.getItem('cart_total_item')));
+    $(".KK-o3G").text(JSON.parse(localStorage.getItem('cart_total_item')))
     
     var total_items = [];
     $('.add_to_cart').click(function(){
@@ -108,7 +109,8 @@
        localStorage.setItem('cart_total_item',total);
        return total;
       }
-      $('#cart').attr('data-content',JSON.parse(localStorage.getItem('cart_total_item')));  
+      //$('#cart').attr('data-content',JSON.parse(localStorage.getItem('cart_total_item')));
+      $(".KK-o3G").text(JSON.parse(localStorage.getItem('cart_total_item')))  
     });
   });
 </script>
