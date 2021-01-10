@@ -1,0 +1,111 @@
+{% extends 'base.html' %} 
+{% block title %} Home|Products {% endblock title %}
+{% block style %}
+<style>
+.img_heigth{
+  height:400px;
+} 
+</style>
+{% endblock style %} 
+{% block body %}
+{% load static %}
+<div class="container mt-5 mb-5">
+  {% if user.is_authenticated and user.id == product_dtls.seller_id.id %}
+  <div class="row my-2 p-2">
+    <form method="POST" action="{% url 'delete_product' product_dtls.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-sm">Delete Product</button>
+    </form>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="card mx-2" style="width: 38rem;">
+        <img src="/media/{{product_dtls.image}}" class="card-img-top rounded mx-auto d-block img_heigth" alt="..." />
+    </div>
+    <div class="card mx-2" style="width: 19.5rem">
+        <div class="card-body">
+            <h5 class="card-title">{{product_dtls.name}}</h5>
+            <label><span class="badge badge-secondary">Price :</span> Rs. {{product_dtls.price}} /-</label>
+            <p>
+              <label>
+                <span class="badge badge-secondary">Quantity :</span>
+              </label>
+              <select id="item_quantity_item_{{product_dtls.id}}" class="item_quantity">
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+              </select>
+            </p>
+            <button type="button" name="add_to_cart" id="item_{{product_dtls.id}}" class="btn btn-primary btn-sm btn-block add_to_cart">Add to Cart</button>
+        </div>
+    </div>
+  </div>
+  <div class="row mt-5 border border-light rounded p-2">
+    <h5><span class="badge badge-secondary">Description</span></h5>
+  </div>
+  <div class="row p-2">
+  <p class="card-text">
+        {{product_dtls.description}}
+    </p>
+  </div>
+</div>
+{% endblock body %}
+{% block js %}
+<script>
+  $(function(){
+    var total_items = [];
+    $('.add_to_cart').click(function(){
+       var cart = localStorage.getItem('total_items');
+       var selected_qty = $("#item_quantity_"+this.id).find(":selected").text();
+       if (cart===null)
+       {
+         total_items.push({
+          'product_id':this.id,
+          'quantity':parseInt(selected_qty),
+          'price':`{{product_dtls.price}}`
+        });
+        localStorage.setItem('total_items',JSON.stringify(total_items));
+        cart_count = JSON.parse(localStorage.getItem('total_items'));
+        total_count(cart_count);
+      }
+       else
+       {
+         var get_total = JSON.parse(localStorage.getItem('total_items'));
+         objIndex = get_total.findIndex((obj=>obj.product_id==this.id));
+                  
+         if(objIndex==-1){
+            get_total.push({
+              'product_id':this.id,
+              'quantity':parseInt(selected_qty),
+              'price':`{{product_dtls.price}}`
+            });
+            total_count(get_total);
+         }
+         else
+         {
+            get_total[objIndex]['quantity']=parseInt(selected_qty);
+
+            if(get_total[objIndex]['quantity']==0){
+                get_total.splice(objIndex,1);
+            }
+            total_items.push(...get_total);
+          }
+          localStorage.setItem('total_items',JSON.stringify(get_total));
+          total_count(get_total);
+       }
+       
+       function total_count(cart_count){
+       newdata = cart_count.map(function(value,index){
+         return parseInt(value['quantity']);
+       });
+       total = newdata.reduce((a,b)=>a+b,0);
+       localStorage.setItem('cart_total_item',total);
+       return total;
+      }
+    });
+  });
+</script>
+{% endblock js %}

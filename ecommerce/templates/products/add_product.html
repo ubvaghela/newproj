@@ -1,0 +1,62 @@
+{% extends 'base.html' %} 
+{% block title %} Home|Products {% endblock title %}
+{% block style %}
+<style>
+.img_heigth{
+  height:400px;
+} 
+</style>
+{% endblock style %} 
+{% block body %}
+{% load static %}
+<div class="container mt-5 mb-5">
+    <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data"> 
+    {% csrf_token %}
+    <div class="col-md-8 container border border-light rounded p-2">
+        <h2 class="text-center">Add New Product</h2>
+        <hr/>
+        <div class="form-group">
+          <label for="name">Product Name</label>
+          <input type="text" name="name" id="name" class="form-control" placeholder="Product Name" aria-describedby="helpId">
+          <small id="helpId" class="text-muted">Product Name</small>
+        </div>
+        <div class="form-group">
+            <label for="subcategory">Category</label>
+            <select class="form-control" name="subcategory" id="subcategory">
+                <option value="">--- Select Category ---</option>
+            {% for categoryitem  in data %}
+                <option value={{categoryitem.id}}>{{categoryitem.name}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input type="text" name="description" id="description" class="form-control" placeholder="Description" aria-describedby="helpId">
+          <small id="helpId" class="text-muted">Product Detail here</small>
+        </div>
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="text" name="price" id="price" class="form-control" placeholder="Price" aria-describedby="helpId">
+          <small id="helpId" class="text-muted">Price in (INR) ₹</small>
+        </div>
+        <div class="form-group">
+          <label for="available_qty">Quantity</label>
+          <input type="text" name="available_qty" id="available_qty" class="form-control" placeholder="Quantity" aria-describedby="helpId">
+          <small id="helpId" class="text-muted">Available Quantity</small>
+        </div>
+        <div class="form-group">
+          <label for="buffer_qty">Buffer Quantity</label>
+          <input type="text" name="buffer_qty" id="buffer_qty" class="form-control" placeholder="Buffer Quantity" aria-describedby="helpId">
+          <small id="helpId" class="text-muted">Extra Quantity</small>
+        </div>
+        <div class="form-group">
+          <label for="image">Image</label>
+          <input type="file" name="image" id="image" class="form-control" placeholder="Image" aria-describedby="helpId">
+        </div>
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+    </div>
+    </form>
+</div>
+{% endblock body %}

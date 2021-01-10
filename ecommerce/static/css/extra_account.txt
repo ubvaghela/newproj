@@ -1,0 +1,218 @@
+ first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput())
+    address = forms.Textarea()
+    city = forms.Select()
+    state = forms.Select()
+    zipcode = forms.IntegerField()
+    mobile_number = forms.IntegerField()
+
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
+    address = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    #city = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    #state = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    zipcode = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    mobile_number = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+
+address = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    #city = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    #state = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    zipcode = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    mobile_number = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','email','password','address','zipcode','mobile_number']
+    
+    def __init__(self,*args,**kwargs):
+        super(UserSignupForm,self).__init__(*args,**kwargs)
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['password'].widget.attrs['class'] = 'form-control'
+
+
+
+
+
+user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='seller_profile')
+    business_address = models.TextField(blank=True,null=True)
+    city =  models.CharField(max_length=30,blank=True,null=True)
+    state =  models.CharField(max_length=30,blank=True,null=True)
+    zipcode = models.PositiveIntegerField(blank=True,null=True)
+    mobile_number = models.BigIntegerField(blank=False,null=False)
+    gst_no = models.BigIntegerField(blank=False,null=False)
+    bank_account_number = models.BigIntegerField(blank=False,null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class SellerSignupForm(forms.ModelForm):
+    address = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    city = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    state = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}))
+    zipcode = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    mobile_number = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','email','password','address','city','state','zipcode','mobile_number']
+    
+    def __init__(self,*args,**kwargs):
+        super(SellerSignup,self).__init__(*args,**kwargs)
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['password'].widget.attrs['class'] = 'form-control'
+
+<form method="POST" action="{% url 'seller_signup' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="first_name">First name</label>
+        <input
+          type="text"
+          name="first_name"
+          id="first_name"
+          class="form-control"
+          placeholder="First name"
+          aria-describedby="helpId"
+        />
+      </div>
+      <div class="form-group">
+        <label for="last_name">Last name</label>
+        <input
+          type="text"
+          name="last_name"
+          id="last_name"
+          class="form-control"
+          placeholder="Last name"
+          aria-describedby="helpId"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="form-control"
+          placeholder="Email"
+          aria-describedby="helpId"
+        />
+        <small id="helpId" class="text-muted">asd@123.com</small>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          class="form-control"
+          placeholder="Password"
+          aria-describedby="helpId"
+        />
+        <small id="helpId" class="text-muted"
+          >Mininum length : 8 character
+        </small>
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <textarea
+          class="form-control"
+          id="address"
+          name="address"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <select class="form-control" id="city" name="city"></select>
+      </div>
+      <div class="form-group">
+        <label for="city">State</label>
+        <select class="form-control" id="state" name="state"></select>
+      </div>
+      <div class="form-group">
+        <label for="zipcode">Zipcode</label>
+        <input
+          type="number"
+          name="zipcode"
+          id="zipcode"
+          class="form-control"
+          placeholder="Zipcode"
+          aria-describedby="helpId"
+        />
+        <small id="helpId" class="text-muted">asd@123.com</small>
+      </div>
+      <div class="form-group">
+        <label for="mobile_number">Mobile Number</label>
+        <input
+          type="number"
+          name="mobile_number"
+          id="mobile_number"
+          class="form-control"
+          placeholder="Mobile Number"
+          aria-describedby="helpId"
+        />
+        <small id="helpId" class="text-muted">asd@123.com</small>
+      </div>
+      <div class="text-center">
+        <input type="submit" value="Signup" class="btn btn-primary w-25" />
+      </div>
+    </form>
+
+
+    def update_profile(request):
+    item = get_object_or_404(Profile,user=request.user.id)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST or None,request.FILES,instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Your profile was successfully updated!')
+            return redirect('/post/profile/')
+    else:
+        form = ProfileForm(instance=item)
+        print(form)
+    return render(request, 'post/update_profile.html', {'form': form})
+
+
+def __init__(self, *args, **kwargs):
+        super(UserProfileForm,self).__init__(*args, **kwargs)
+        self.fields.pop('first_name',)
+        self.fields.pop('last_name',)
+        self.fields.pop('email',)
+        self.fields.pop('password',)
+
+=============================================================
+
+class UserProfileView(View):
+    def get(self, request):
+        profiles = User.objects.all()
+        context = {"data":profiles}
+        return render(request,'account/user_signup.html',context)
+
+#path("create/",UserProfileView.as_view(),name='usercreate'),
+ #url(r'^user/$',views.UserProfileView.as_view(),name='user_list'),
+ #url(r'^seller/$',views.SellerProfileView.as_view(),name='seller_list'),
+ #url(r'^login/$',views.LoginView.as_view(),name="login"),
+ 
+
+
+ "1) id
+2) name
+3) Category - Foreignkey
+4) Subcategory - Foreignkey
+5) Product_Description
+6) Price
+7) Available Quantity
+8) Buffer Quantity
+9) image
+10) vender_id - ForeignKey(READ Only)
+11) Created_at
+12) Updated_at"
+
+<option value={{product_dtls.subcategory.id}}>{{product_dtls.subcategory}}</option>
