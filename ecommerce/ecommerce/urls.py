@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ecommerce URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -23,6 +24,9 @@ urlpatterns = [
     
     path('',include('products.urls')),
     path('home/',include('home.urls')),
-    path('account/',include('account.urls')), 
+    path('account/',include('account.urls')),
+    path('cart/',include('cart.urls')),
+    path('order/',include('order.urls')),
+    path('payment/',include('payment.urls')), 
     path('admin/', admin.site.urls),
 ]+static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -30,7 +30,7 @@
               <label>
                 <span class="badge badge-secondary">Quantity :</span>
               </label>
-              <select id="item_quantity_item_{{product_dtls.id}}" class="item_quantity">
+              <select id="item_quantity_{{product_dtls.id}}" class="item_quantity">
                 <option value=0>0</option>
                 <option value=1>1</option>
                 <option value=2>2</option>
@@ -39,7 +39,7 @@
                 <option value=5>5</option>
               </select>
             </p>
-            <button type="button" name="add_to_cart" id="item_{{product_dtls.id}}" class="btn btn-primary btn-sm btn-block add_to_cart">Add to Cart</button>
+            <button type="button" name="add_to_cart" id="{{product_dtls.id}}" class="btn btn-primary btn-sm btn-block add_to_cart">Add to Cart</button>
         </div>
     </div>
   </div>
@@ -68,6 +68,8 @@
        {
          total_items.push({
           'product_id':this.id,
+          'product_name':`{{product_dtls.name}}`,
+          'category':`{{product_dtls.subcategory.slug}}`,
           'quantity':parseInt(selected_qty),
           'price':`{{product_dtls.price}}`
         });
@@ -83,6 +85,8 @@
          if(objIndex==-1){
             get_total.push({
               'product_id':this.id,
+              'product_name':`{{product_dtls.name}}`,
+              'category':`{{product_dtls.subcategory.slug}}`,
               'quantity':parseInt(selected_qty),
               'price':`{{product_dtls.price}}`
             });

@@ -1,0 +1,20 @@
+{% extends 'base.html' %} 
+{% block title %} SALE|Order Success {% endblock title %} 
+{% block style %} 
+{% endblock style %}
+{% block body %}
+{% if user.is_authenticated %}
+<div class="container mt-5">
+    Order Success
+    Your Order Id : {{order_id.id}}
+</div>
+{% block js %}
+<script>
+    $(function(){
+        localStorage.clear();
+        $('.KK-o3G').text('');
+    });
+</script>
+{% endblock js %}
+{% endif %}
+{% endblock body %}

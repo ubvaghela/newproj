@@ -18,25 +18,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href={% static "css/base.css" %}/> 
-    <style>
-      .KK-o3G{
-       /* position: absolute; */
-       left: 11px; 
-        top: 7px; 
-        text-align: center; 
-        border-radius: 7px; 
-        width: 18px; 
-        height: 18px; 
-        background-color: #ff6161; 
-        border: 1px solid #fff; 
-        font-weight: 400; 
-        color: #f0f0f0; 
-        line-height: 16px; 
-        font-size: 12px;
-         }
-       </style>
     {% block style %}
-    
     {% endblock style %}
   </head>
   <body class="d-flex flex-column h-100">
@@ -100,10 +82,11 @@
               Search
             </button> 
           </form>
-              <div class="KK-o3G ml-2 mr-1"></div>
-              <img src="{% static 'img/cart.svg' %}"/>
-              
+            <a href="{% url 'cart_index' %}" class="cart_link">
+            <div class="KK-o3G"></div>
+              <img src="{% static 'img/cart.svg' %}" style="margin-top:-0.7rem"/>
             </button>
+            </a>
           <ul class="navbar-nav">
             {% if user.is_authenticated %}
             <li class="nav-item">
@@ -181,6 +164,11 @@
             //alert("The paragraph was clicked.");
           });
        });
+
+       $(function(){
+         let cart = JSON.parse(localStorage.getItem('cart_total_item'));
+         $('.KK-o3G').text(cart);
+       })
     </script>
     {% block js %}
     {% endblock js %}

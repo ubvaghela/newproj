@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}
+Home|Cart
+{% endblock title %}
+{% block style %}
+{% endblock style %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row m-4">
+        <div class="col-md-8">
+            <div class="border rounded bg-light p-2"><h5 class="m-2">MY Cart</h5></div>
+            <ul class="list-group item_list cart_details"></ul>
+            <div class="row border rounded bg-light p-2 m-0">
+                <div class="col-md-4 my-2">
+                    <button type="button" name="clearcart" id="clearcart" class="btn btn-primary btn-sm btn-block">Clear cart</button>
+                </div>
+                <div class="col-md-4 my-2 position-absolute float-md-right" style="right:1.5rem">
+                    <a href="{% url 'checkout' %}" name="checkout" id="checkout" class="btn btn-primary btn-sm btn-block">Place Order</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 price_details">
+            <div class="border rounded bg-light p-2"><h5 class="m-2">Price Details</h5></div>
+            <ul class="list-group price_total">
+                <li class="list-group-item">
+                    <p>
+                        <span>Price(</spna><span id="total_item_in_price_column">2</span> items)
+                        <span class="subtotal float-right"></spna>
+                    </p>
+                </li>
+                <li class="list-group-item">
+                    <p>
+                        <span>Discount</spna>
+                        <span class="float-right">0</spna>
+                    </p>
+                </li>
+                <li class="list-group-item">
+                    <p>
+                        <span>Delivery Charges</spna>
+                        <span class="float-right">Free</spna>
+                    </p>
+                </li>
+                <li class="list-group-item">
+                    <p>
+                        <h6><span class="float-left"> Total Amount </spna></h6>
+                        <span class="total float-right"></spna>
+                    </p>
+                </li>
+            </ul>            
+        <div>
+    </div>
+</div>
+{% endblock body %}
+{% block js %}
+    <script>
+        $(function(){
+            cart = JSON.parse(localStorage.getItem('total_items'));
+            total_cart_items = JSON.parse(localStorage.getItem('cart_total_item'));
+
+            $('#total_item_in_price_column').text(total_cart_items);
+
+            if(total_cart_items==null){
+                $('.KK-o3G').text('')
+                $('.cart_details').html("<li class='list-group-item'>Your Cart is empty</li>");
+                $('#checkout').prop('disabled', true);
+            }else{
+                items = cart.map(function(value,index){
+                    return `<li class="list-group-item">
+                                <p><span class="font-weight-bold">Product Name : </span><a href=/${value['category']}/${value['product_id']}>${value['product_name']}</a></p>
+                                <p><span class="font-weight-bold">Qty : </span>${value['quantity']}</p>
+                                <p><span class="font-weight-bold">Price : </span>${value['price']}</p>
+                            </li>`;
+                });
+                $('.item_list').html(items);
+                
+                item_price =cart.map(function(value,index){
+                        let t=0;
+                        t +=parseInt(value['price']*value['quantity'])
+                        return t;
+                    });
+                price_total = item_price.reduce((a,b)=>a+b,0);
+                $('.subtotal').html("₹"+price_total);
+                $('.total').html("₹"+price_total);
+
+                $('#checkout').prop('disabled', false);
+                
+                $('#clearcart').click(function(){
+                    localStorage.clear();
+                    location.reload();
+                });
+            }
+        });
+    </script>
+{% endblock js %}

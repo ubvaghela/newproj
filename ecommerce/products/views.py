@@ -9,7 +9,7 @@ from  home.views import category
 def home(request,slug=None):
     context = category(request)
     if slug:
-        get_slug = Subcategory.objects.get(slug=slug)
+        get_slug = get_object_or_404(Subcategory,slug=slug)
         all_products = Product.objects.filter(subcategory=get_slug.id).all()
     else:
         all_products = Product.objects.all()
@@ -18,8 +18,10 @@ def home(request,slug=None):
 
 
 def product_detail(request,id,slug):
+    context = category(request)
     product = Product.objects.get(pk=id)
-    context = {'product_dtls':product}
+    context['product_dtls'] = product
+    #context = {'product_dtls':product}
     return render(request,'products/product_detail.html',context)
 
 

@@ -1,43 +1,7 @@
 {% extends 'base.html' %} 
 {% block title %} Home|Products {% endblock title %}
 {% block style %}
-<style>
-.img_heigth{
-  height:200px;
-  opacity: 1;
-  transition: .5s ease;
-  backface-visibility: hidden;
-} 
 
-.middle {
-  transition: .5s ease;
-  opacity: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.product_id:hover .image {
-  opacity: 0.3;
-}
-
-.product_id:hover .middle {
-  opacity: 1;
-}
-
-.text {
-  background-color: #4CAF50;
-  color: white;
-  font-size: 16px;
-  padding: 0.5rem 1rem;
-  opacity:0.7;
-}
-
-
-</style>
 {% endblock style %} 
 {% block body %}
 {% load static %}
@@ -45,11 +9,9 @@
   <div class="row">
   {% for item in all_products %}
   <a href="{{item.subcategory.slug}}/{{item.id}}" name={{item.id}} id="product-{{item.id}}" class="product_id text-decoration-none">
-  <div class="card mx-3 mb-4" style="width: 15.8rem">
+  <div class="card mx-3 mb-4 box" style="width: 15.8rem">
     <img src="/media/{{item.image}}" class="card-img-top img_heigth image" alt="..." />
-    <div class="middle">
-      <div class="text">₹ {{item.price}}/-</div>
-    </div>
+    <div class="ribbon ribbon-top-left"><span>₹{{item.price}}/-</span></div>
     <div class="card-body">
       <h5 class="card-title text-dark">{{item.name}}</h5>
     </div>

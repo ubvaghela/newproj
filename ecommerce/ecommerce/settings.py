@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import stripe
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Stripe API Key
+stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
 
 # Application definition
 
@@ -42,6 +45,9 @@ INSTALLED_APPS = [
     'account',
     'products',
     'category',
+    'cart',
+    'order',
+    'payment',
 ]
 
 MIDDLEWARE = [
