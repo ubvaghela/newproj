@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import stripe
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,15 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '62$!p7pt=l6%3oytf7du(kj$8^l)7a$gx&)%6bwvdbc4$9lp57'
+SECRET_KEY = config('SECRET_KEY')
+STRIPE_SECRAT_KEY = config('STRIPE_SECRAT_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',default=True,cast=bool)
 
 ALLOWED_HOSTS = []
-
-# Stripe API Key
-stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
 
 # Application definition
 

@@ -7,9 +7,10 @@ import stripe
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.core.mail import send_mail
+from django.conf import settings
 
 
-stripe.api_key = 'sk_test_51I8iATIqXYelWJBByYQUj7VUiZEQN8bqB21s3Mr1wtaCrD3bkIu5zIXp08MecUfzrPORzz4FS0nj1jYoIEg0n6NZ004Gb29U5r'
+stripe.api_key = settings.STRIPE_SECRAT_KEY
 
 @login_required(login_url='login')
 def checkout(request):
