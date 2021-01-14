@@ -5,8 +5,12 @@
 {% block body %}
 {% if user.is_authenticated %}
 <div class="container mt-5">
-    Order Success
-    Your Order Id : {{order_id.id}}
+    <div class="col-md-8 container text-center">
+    <h3 class="justify-content-center">Thank You!</h3> 
+    <p class="lead">Your Order Place Successfully</p>
+    <h6>Your Order Id : {{order_id.id}}</h6>
+    <p class="lead"><strong>Please check your email</strong> for further instructions on how to complete your account setup.</p>
+    </div>
 </div>
 {% block js %}
 <script>

@@ -59,10 +59,11 @@ Home|Cart
 
             $('#total_item_in_price_column').text(total_cart_items);
 
-            if(total_cart_items==null){
+            if(total_cart_items==null || total_cart_items==0){
                 $('.KK-o3G').text('')
                 $('.cart_details').html("<li class='list-group-item'>Your Cart is empty</li>");
                 $('#checkout').prop('disabled', true);
+                $('#checkout').attr('href','#');
             }else{
                 items = cart.map(function(value,index){
                     return `<li class="list-group-item">

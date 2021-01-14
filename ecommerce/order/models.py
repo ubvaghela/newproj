@@ -24,7 +24,6 @@ ORDER_STATUS = [
 ]
 
 
-
 class Checkout(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     address = models.TextField()

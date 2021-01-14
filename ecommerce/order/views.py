@@ -6,10 +6,10 @@ import json
 import stripe
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
+from django.core.mail import send_mail
 
 
 stripe.api_key = 'sk_test_51I8iATIqXYelWJBByYQUj7VUiZEQN8bqB21s3Mr1wtaCrD3bkIu5zIXp08MecUfzrPORzz4FS0nj1jYoIEg0n6NZ004Gb29U5r'
-
 
 @login_required(login_url='login')
 def checkout(request):
@@ -37,46 +37,62 @@ def checkout(request):
             payment_method=payment_method
         )
         checkout.save()
-
+        
+        #Payment Method is Case on Delivery
         if payment_method=="COD":
             place_order = order_object_save(request,str_to_json,checkout)
             context = {"order_id":place_order}
             temp = 'order/success.html'
             temp_ret(temp)
         else:
-            token = request.POST.get('stripeToken')
-            print(token)
-                # charge = stripe.Charge.create(
-                #     amount=100,
-                #     currency='inr',
-                #     description='Example Charge',
-                #     source = token,
-                #     customer=token,
-                # )
-                # return render(request,'order/success.html',context)
-            
-                
-    context = {'order':'T-Shirt'}
+            payment_status = 'DONE'
+            stripeToken = request.POST.get('stripeToken')
+            # Create account in stripe 
+            account = stripe.Account.create(
+                country = "IN",
+                type="custom",
+                email=request.user,
+                capabilities={
+                    'card_payments':{
+                        'requested':True,
+                    },
+                    'transfers':{
+                        'requested':True,
+                    },
+                },
+            )
+            # Create customer in stripe 
+            customer = stripe.Customer.create(
+                address = {
+                    'line1':address,
+                    'city':city,
+                    'state':state,
+                    'postal_code':zipcode,
+
+                },
+                email=request.user,
+            )
+            # Create charges for customer in stripe 
+            charge = stripe.Charge.create(
+                source=stripeToken,
+                amount = amount,
+                currency = "inr", 
+            )
+            context = {"order_id":"place_order"}
+            place_order = order_object_save(request,str_to_json,checkout)
+            send_order_success_email(request,place_order,str_to_json)
+            context = {"order_id":place_order}
+            temp = 'order/success.html'
+            temp_ret(temp)
     return render(request,temp_ret(f'{temp}'),context)
 
-def charge(request):
-    if request.method == "POST":
-        print(request.POST)
-    return redirect('home')
-'''
-#
+
 #   Return order Success Template
-#  
-'''
 def temp_ret(temp):
     return temp
 
 
-'''
-#
 #   Save Order and OrderItem Objects
-#
-'''
 def order_object_save(request,str_to_json,checkout):
     user = request.user
     checkout = checkout
@@ -99,32 +115,9 @@ def order_object_save(request,str_to_json,checkout):
     return order
 
 
-def create_checkout_session(request):
-   pass
-
-'''
-@csrf_protect
-def create_checkout_session(request):
-    try:
-        session = stripe.checkout.Session.create(
-            payment_method_types = ['card'],
-            line_items=[{
-                'price_data':{
-                    'currency':'usd',
-                    'product_data':{
-                        'name':'T-shirt',
-                    },
-                    'unit_amount':request.POST.get('total'),
-                },
-                'quantity':1,
-            }],
-            mode = 'payment',
-            success_url = 'http://127.0.0.1:8000/order/checkout',
-            cancel_url = 'http://127.0.0.1:8000/'
-        )
-        print(session)
-        #return HttpResponse(status=200)
-        return redirect('home')
-    except:
-         return HttpResponse(status=400)
-'''
+# send mail in console
+def send_order_success_email(request,place_order,str_to_json):
+    order_details = f'Thank you for Order \n Your order id :{place_order} \n order Items :  {str_to_json}'
+    customer_email = request.user
+    send_mail('SALE Order',order_details,'customer@sale.com',[customer_email],fail_silently=False,)
+    

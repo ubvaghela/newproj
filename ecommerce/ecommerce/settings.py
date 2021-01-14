@@ -155,3 +155,6 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
     50: 'critical',
 }
+
+# Configer Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

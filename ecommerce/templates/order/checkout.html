@@ -1,11 +1,13 @@
 {% extends 'base.html' %} 
+{% load static %}
 {% block title %} Home|About {% endblock title %} 
 {% block style %} 
 {% endblock style %}
+<style rel="{% static 'css/card_checkout.css' %}"/>
 {% block body %}
 <div class="container mt-5">
   <div class="col-md-10 container">
-    <form method="POST" action="{% url 'checkout' %}">
+    <form method="POST" action="{% url 'checkout' %}" id="payment-form">
         {% csrf_token %}
         <input type="hidden" id="cart_items" name="cart_items">
         <input type="hidden" id="total" name="total">
@@ -111,171 +113,78 @@
             >
               <div class="card-body">
                 <div class="custom-control custom-radio">
-                    <input id="cod" name="paymentMethod" type="radio" class="custom-control-input" required="" value="COD">
+                    <input id="cod" name="paymentMethod" type="radio" class="custom-control-input cod" required="" value="COD">
                     <label class="custom-control-label" for="cod">Cash on Delivery</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked="" required="" value="CREDIT">
+                    <input id="credit" name="paymentMethod" type="radio" class="custom-control-input cr_bd" required="" value="CREDIT">
                     <label class="custom-control-label" for="credit">Credit card</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required="" value="DEBIT">
+                    <input id="debit" name="paymentMethod" type="radio" class="custom-control-input cr_bd" required="" value="DEBIT">
                     <label class="custom-control-label" for="debit">Debit card</label>
                 </div>
-                <div class="container">
-                  <div class="row">
-                    
-                    <div class="col-md-6 mb-3">
-                      <label for="cardNumber">Credit card number</label>
-                      <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="" required="">
-                      <div class="invalid-feedback">
-                       Credit card number is required
-                      </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="cardExpiry">Expiration</label>
-                      <input type="text" class="form-control" id="cardExpiry" name="cardExpiry" placeholder="" required="">
-                      <div class="invalid-feedback">
-                        Expiration date required
-                      </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="cardCvc">CVV</label>
-                      <input type="text" class="form-control" id="cardCvc" name="cardCvc" placeholder="" required="">
-                      <div class="invalid-feedback">
-                        Security code required
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
-                      <label for="billingName">Name on card</label>
-                      <input type="text" class="form-control" id="billingName" name="billingName" placeholder="" required="">
-                      <small class="text-muted">Full name as displayed on card</small>
-                      <div class="invalid-feedback">
-                        Name on card is required
-                      </div>
-                    </div>
-                  </div>
+                <div id="card_form">
+                  
                 </div>
                 <div class="form-group col-md-4 container my-3">
-                  {{ client_secret }}
-                    <button class="btn btn-primary btn-sm btn-block" type="submit" id="checkout-button" name="checkout-button" data-secret="{{ client_secret }}">Continue to checkout</button>
+                    <button class="btn btn-primary btn-sm btn-block" type="submit" id="checkout-button" name="checkout-button">Continue to checkout</button>
                 </div>
-                <script src="https://js.stripe.com/v3/"></script>
-
-
               </div>
             </div>
           </div>
         </div>
     </form>
-    <form action="{% url 'charge' %}" method="post" id="payment-form">
-      {% csrf_token %}
-      <div class="form-row">
-        <label for="card-element">
-          Credit or debit card
-        </label>
-        <div id="card-element">
-          <!-- A Stripe Element will be inserted here. -->
-        </div>
     
-        <!-- Used to display form errors. -->
-        <div id="card-errors" role="alert"></div>
-      </div>
-    
-      <button id="sb" type="submit">Submit Payment</button>
-    </form>
   </div>
 </div>
 {% endblock body %}
 
 
-<!--
+
+{% block js %}
+
 <script>
+var card_div = document.createElement('div');
+var card_script = document.createElement('script');
+
+var cr_db = document.querySelector('.cr_bd');
+var cod = document.querySelector('.cod');
+
+cr_db.addEventListener('click', function(){
+
+card_script.src='https://js.stripe.com/v3/';
+document.head.appendChild(card_script);
+
+card_div.innerHTML=`<div class="form-group card_details w-50">
+                    <label for="card-element">Credit or debit card</label>
+                    <div id="card-element" class="border border-light p-2">
+                      <!-- A Stripe Element will be inserted here. -->
+                    </div>
+                      <!-- Used to display form errors. -->
+                    <div id="card-errors" role="alert"></div>
+                  </div>`;
+  document.getElementById('card_form').appendChild(card_div);
+  //window.location.reload('card_form');
+  
+  setTimeout(function() {
+    strip_load();
+  },2000);
+});
+
+cod.addEventListener('click', function(){
+  card_script.src='#';
+  document.head.appendChild(card_script);
+  card_div.innerHTML=``;
+  document.getElementById('card_form').appendChild(card_div);
+});
+
+
+function strip_load(){
 // Set your publishable key: remember to change this to your live publishable key in production
 // See your keys here: https://dashboard.stripe.com/account/apikeys
 var stripe = Stripe("pk_test_51I8iATIqXYelWJBBcOvvZnan7JzjjSEcuJrl7WVrhpDLsTJ9NFVI6oOEOGjtAqSTzmZ9smu9ICfJA5OfigXEQDLO00lPVeylu5");
-var elements = stripe.elements();
-var form = document.getElementById('payment-form');
 
-form.addEventListener('submit', function(ev) {
-  ev.preventDefault();
-  stripe.confirmCardPayment(clientSecret, {
-    payment_method: {
-      card: card,
-      billing_details: {
-        name: 'Jenny Rosen'
-      }
-    }
-  }).then(function(result) {
-    if (result.error) {
-      // Show error to your customer (e.g., insufficient funds)
-      console.log(result.error.message);
-    } else {
-      // The payment has been processed!
-      if (result.paymentIntent.status === 'succeeded') {
-        // Show a success message to your customer
-        // There's a risk of the customer closing the window before callback
-        // execution. Set up a webhook or plugin to listen for the
-        // payment_intent.succeeded event that handles any business critical
-        // post-payment actions.
-      }
-    }
-  });
-});
-</script>
--->
-{% block js %}
-
-<!--
- <script type="text/javascript">
-    // Create an instance of the Stripe object with your publishable API key
-    var stripe = Stripe("pk_test_51I8iATIqXYelWJBBcOvvZnan7JzjjSEcuJrl7WVrhpDLsTJ9NFVI6oOEOGjtAqSTzmZ9smu9ICfJA5OfigXEQDLO00lPVeylu5");
-    var checkoutButton = document.getElementById("checkout-button");
-    checkoutButton.addEventListener("click", function () {
-      fetch("/create-checkout-session", {
-        method: "POST",
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (session) {
-          return stripe.redirectToCheckout({ sessionId: session.id });
-        })
-        .then(function (result) {
-          // If redirectToCheckout fails due to a browser or network
-          // error, you should display the localized error message to your
-          // customer using error.message.
-          if (result.error) {
-            alert(result.error.message);
-          }
-        })
-        .catch(function (error) {
-          console.error("Error:", error);
-        });
-    });
-  </script>
--->
-<script>
-    $(function(){
-        $('#checkout-button, #sb').click(function(){
-            cart_items = JSON.parse(localStorage.getItem('total_items'))
-            item_price =cart_items.map(function(value,index){
-                        let t=0;
-                        t +=parseInt(value['price'])
-                        return t;
-                    });
-            price_total = item_price.reduce((a,b)=>a+b,0);
-            console.log(JSON.stringify(cart_items))
-            $('#cart_items').val(JSON.stringify(cart_items));
-            $('#total').val(price_total);
-            //localStorage.clear()
-    });
-    });
-</script>
-<script type="text/javascript" nonce="">  // Create a Stripe client.
-  var stripe = Stripe('pk_test_51I8iATIqXYelWJBBcOvvZnan7JzjjSEcuJrl7WVrhpDLsTJ9NFVI6oOEOGjtAqSTzmZ9smu9ICfJA5OfigXEQDLO00lPVeylu5');
 // Create an instance of Elements.
 var elements = stripe.elements();
 
@@ -302,7 +211,6 @@ var card = elements.create('card', {style: style});
 
 // Add an instance of the card Element into the `card-element` <div>.
 card.mount('#card-element');
-
 // Handle real-time validation errors from the card Element.
 card.on('change', function(event) {
   var displayError = document.getElementById('card-errors');
@@ -343,5 +251,31 @@ function stripeTokenHandler(token) {
   // Submit the form
   form.submit();
 }
+}
+</script>
+<script>
+    $(function(){
+      $("#card-element input[type=text]").addClass("form-control");
+       $("#cod").click(function(){
+          $(".card_details").hide();
+        });
+        $(".cr_bd").click(function(){
+          $(".card_details").show();
+        });
+        
+        $('#checkout-button').click(function(){
+            cart_items = JSON.parse(localStorage.getItem('total_items'))
+            item_price =cart_items.map(function(value,index){
+                        let t=0;
+                        t +=parseInt(value['price'])
+                        return t;
+                    });
+            price_total = item_price.reduce((a,b)=>a+b,0);
+            console.log(JSON.stringify(cart_items))
+            $('#cart_items').val(JSON.stringify(cart_items));
+            $('#total').val(price_total);
+            //localStorage.clear()
+    });
+    });
 </script>
 {% endblock js %}
