@@ -113,7 +113,7 @@
             >
               <div class="card-body">
                 <div class="custom-control custom-radio">
-                    <input id="cod" name="paymentMethod" type="radio" class="custom-control-input cod" id="cod" ckecked="false" required="" value="COD">
+                    <input id="cod" name="paymentMethod" type="radio" class="custom-control-input cod" ckecked="false" required="" value="COD">
                     <label class="custom-control-label" for="cod">Cash on Delivery</label>
                 </div>
                 <div class="custom-control custom-radio">
@@ -128,7 +128,7 @@
                   
                 </div>
                 <div class="form-group col-md-4 container my-3">
-                    <button class="btn btn-primary btn-sm btn-block"  id="checkout-button" name="checkout-button">Continue to checkout</button>
+                    <button class="btn btn-primary btn-sm btn-block" type="submit" id="checkout-button" name="checkout-button">Continue to checkout</button>
                 </div>
               </div>
             </div>
@@ -144,87 +144,141 @@
 
 {% block js %}
 
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-function strip_load(){
-    // Set your publishable key: remember to change this to your live publishable key in production
-    // See your keys here: https://dashboard.stripe.com/account/apikeys
-    var stripe = Stripe("pk_test_51I8iATIqXYelWJBBcOvvZnan7JzjjSEcuJrl7WVrhpDLsTJ9NFVI6oOEOGjtAqSTzmZ9smu9ICfJA5OfigXEQDLO00lPVeylu5");
+var card_div = document.createElement('div');
 
-    // Create an instance of Elements.
-    var elements = stripe.elements();
+var card_script = document.createElement('script');
+card_script.src='https://js.stripe.com/v3/';
+document.head.appendChild(card_script);
 
-    // Custom styling can be passed to options when creating an Element.
-    // (Note that this demo uses a wider set of styles than the guide below.)
-    var style = {
-      base: {
-        color: '#32325d',
-        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-        fontSmoothing: 'antialiased',
-        fontSize: '16px',
-        '::placeholder': {
-          color: '#aab7c4'
-        }
-      },
-      invalid: {
-        color: '#fa755a',
-        iconColor: '#fa755a'
-      }
-    };
-
-    // Create an instance of the card Element.
-    var card = elements.create('card', {style: style});
+var cr_db = document.querySelector('.cr_bd');
+var cod = document.querySelector('.cod');
 
 
-    // Add an instance of the card Element into the `card-element` <div>.
-    card.mount('#card-element'); 
+cr_db.addEventListener('click', function(){
+card_div.innerHTML=`<div class="form-group card_details w-50">
+                    <label for="card-element">Credit or debit card</label>
+                    <div id="card-element" class="border border-light p-2">
+                      <!-- A Stripe Element will be inserted here. -->
+                    </div>
+                      <!-- Used to display form errors. -->
+                    <div id="card-errors" role="alert"></div>
+                  </div>`;
+  document.getElementById('card_form').appendChild(card_div);
+  //window.location.reload('card_form');
+  
+  setTimeout(function() {
+    strip_load();
+  },500);
+});
 
-    var rb = document.querySelector('#cod');
-        
-    // Handle real-time validation errors from the card Element.
-    card.on('change', function(event) {
-      var displayError = document.getElementById('card-errors');
-      if (event.error) {
-        displayError.textContent = event.error.message;
-      } else {
-        displayError.textContent = '';
-      }
-    }); 
-
-    // Handle form submission.
-    var form = document.getElementById('payment-form');
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      stripe.createToken(card).then(function(result) {
-        if (result.error) {
-          if(rb.checked){
-            form.submit();
-            exit(0);
-          }else{
-            // Inform the user if there was an error.
-            var errorElement = document.getElementById('card-errors');
-            errorElement.textContent = result.error.message;
-          }
-        } else {
-          // Send the token to your server.
-          stripeTokenHandler(result.token);
-        }
-      });
-    });
-
-    // Submit the form with the token ID.
-    function stripeTokenHandler(token) {
-      // Insert the token ID into the form so it gets submitted to the server
-      var form = document.getElementById('payment-form');
-      var hiddenInput = document.createElement('input');
-      hiddenInput.setAttribute('type', 'hidden');
-      hiddenInput.setAttribute('name', 'stripeToken');
-      hiddenInput.setAttribute('value', token.id);
-      form.appendChild(hiddenInput);
-      
-      // Submit the form
-      form.submit();
+cod.addEventListener('click', function(){
+  // var rbs = document.querySelector('input[name="paymentMethod"]');
+  var rbs = document.querySelectorAll('input[name="paymentMethod"]');
+  for (const rb of rbs) {
+    if (rb.checked) {
+      alert(rb.value)
+      break;
     }
+  }
+  setTimeout(function() {  
+    strip_load();
+  },1000);
+  
+});
+
+
+function strip_load(){
+// Set your publishable key: remember to change this to your live publishable key in production
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+var stripe = Stripe("pk_test_51I8iATIqXYelWJBBcOvvZnan7JzjjSEcuJrl7WVrhpDLsTJ9NFVI6oOEOGjtAqSTzmZ9smu9ICfJA5OfigXEQDLO00lPVeylu5");
+
+// Create an instance of Elements.
+var elements = stripe.elements();
+
+// Custom styling can be passed to options when creating an Element.
+// (Note that this demo uses a wider set of styles than the guide below.)
+var style = {
+  base: {
+    color: '#32325d',
+    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    fontSmoothing: 'antialiased',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+  },
+  invalid: {
+    color: '#fa755a',
+    iconColor: '#fa755a'
+  }
+};
+
+// Create an instance of the card Element.
+var card = elements.create('card', {style: style});
+
+// Add an instance of the card Element into the `card-element` <div>.
+var rbs = document.querySelectorAll('input[name="paymentMethod"]');
+  for (const rb of rbs) {
+    if (rb.checked) {
+      if(rb.value=='COD'){
+        
+        card.destroy();
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+          var form = document.getElementById('payment-form');
+          form.submit();
+        });
+      }
+      else{
+        card.mount('#card-element');   
+        // Handle real-time validation errors from the card Element.
+card.on('change', function(event) {
+  var displayError = document.getElementById('card-errors');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+  } else {
+    displayError.textContent = '';
+  }
+}); 
+form_handle(stripe,card)    
+      }
+    }
+  }
+
+
+}
+function form_handle(stripe,card){
+// Handle form submission.
+var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  stripe.createToken(card).then(function(result) {
+    if (result.error) {
+      // Inform the user if there was an error.
+      var errorElement = document.getElementById('card-errors');
+      errorElement.textContent = result.error.message;
+    } else {
+      // Send the token to your server.
+      stripeTokenHandler(result.token);
+    }
+  });
+});
+
+// Submit the form with the token ID.
+function stripeTokenHandler(token) {
+  // Insert the token ID into the form so it gets submitted to the server
+  var form = document.getElementById('payment-form');
+  var hiddenInput = document.createElement('input');
+  hiddenInput.setAttribute('type', 'hidden');
+  hiddenInput.setAttribute('name', 'stripeToken');
+  hiddenInput.setAttribute('value', token.id);
+  form.appendChild(hiddenInput);
+
+  // Submit the form
+  form.submit();
+}
 }
 </script>
 
@@ -234,20 +288,9 @@ function strip_load(){
       $("#card-element input[type=text]").addClass("form-control");
        $("#cod").click(function(){
           $(".card_details").hide();
-          strip_load();
         });
         $(".cr_bd").click(function(){
           $(".card_details").show();
-
-          payment_card_form = `<div class="form-group card_details w-50">
-          <label for="card-element">Credit or debit card</label>
-          <div id="card-element" class="border border-light p-2">
-          </div>
-          <div id="card-errors" role="alert"></div>
-          </div>`;
-
-          $('#card_form').html(payment_card_form);
-          strip_load();
         });
         
         $('#checkout-button').click(function(){
@@ -261,6 +304,7 @@ function strip_load(){
             console.log(JSON.stringify(cart_items))
             $('#cart_items').val(JSON.stringify(cart_items));
             $('#total').val(price_total);
+            //localStorage.clear()
     });
     });
 </script>
