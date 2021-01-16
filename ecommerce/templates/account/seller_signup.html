@@ -8,11 +8,10 @@
     <form method="POST" action="{% url 'seller_signup' %}">
       {% csrf_token %}
       {% for field in form.visible_fields %}
-        {{ field.errors }}
         <div class="form-group">
             <label for="{{field.name}}">{{ field.label_tag }}</label>
             {{field}}
-            <small id="helpId" class="text-muted">{{field.error}}</small>
+            <small id="helpId" class="text-danger">{{field.errors}}</small>
         </div>
       {% endfor %}
       <div class="text-center">
